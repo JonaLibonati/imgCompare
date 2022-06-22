@@ -40,65 +40,87 @@ class simpleServer:
     def openLocalHost(self):
         webbrowser.open_new_tab(self.URL)
 
-class imagePair:
+class loads:
 
-    def __init__(self, path_image_one, path_image_two):
-        py_path = abspath(getsourcefile(lambda:0))
-        folder_path = py_path.replace('imgCompare.py','')
-        self.loads_path = folder_path + 'loads/'
-        self.path_post_one = self.loads_path + os.path.basename(path_image_one)
-        self.path_post_two = self.loads_path + os.path.basename(path_image_two)
-        self.path_origin_one = path_image_one
-        self.path_origin_two = path_image_two
-        self.list_paths = [(self.path_origin_one, self.path_post_one), (self.path_origin_two, self.path_post_two)]
+    def __init__(self, loads_path):
+        self.path = loads_path
+        self.imagePairs = []
 
-    def addPairToDir(self):
-        #if os.path.exists(self.path_image_one):
-            #with open(self.path_image_one, 'rb') as forigen:
-                #with open(self.loads_path_imageOne, 'wb') as fdestino:
-                    #shutil.copyfileobj(forigen, fdestino)
-        #if os.path.exists(self.path_image_two):
-            #with open(self.path_image_two, 'rb') as forigen:
-                #with open(self.loads_path_imageTwo, 'wb') as fdestino:
-                    #shutil.copyfileobj(forigen, fdestino)
-        for tuple in self.list_paths:
-            if os.path.exists(tuple[0]):
-                with open(tuple[0], 'rb') as forigin:
-                    with open(tuple[1], 'wb') as fdestino:
-                        shutil.copyfileobj(forigin, fdestino)
+    def empty(self):
+        if os.path.exists(self.path):
+            for image in os.listdir(self.path):
+                os.remove(self.path + image)
 
-    def addPairToList(self, array_target):
-        item_to_add = [self.path_post_one, self.path_post_two]
-        array_target.append(item_to_add)
+    def addPair(self, Pair):
+        self.imagePairs.append(Pair)
 
-    def emptyPairDir(self):
-        if os.path.exists(self.loads_path):
-            for image in os.listdir(self.loads_path):
-                os.remove(self.loads_path + image)
+    def copyPair(self):
+            #if os.path.exists(self.path_image_one):
+                #with open(self.path_image_one, 'rb') as forigen:
+                    #with open(self.loads_path_imageOne, 'wb') as fdestino:
+                        #shutil.copyfileobj(forigen, fdestino)
+            #if os.path.exists(self.path_image_two):
+                #with open(self.path_image_two, 'rb') as forigen:
+                    #with open(self.loads_path_imageTwo, 'wb') as fdestino:
+                        #shutil.copyfileobj(forigen, fdestino)
+            for pair in self.imagePairs :
+                for i, image in enumerate(pair.images) :
+                    if os.path.exists(image.path):
+                        with open(image.path, 'rb') as forigin:
+                            image.path = f'{self.path}{image.name}__{i}'
+                            with open(image.path, 'wb') as fdestino:
+                                shutil.copyfileobj(forigin, fdestino)
 
-    #def addPairs ()
+    def toJson(self):
+        json = {}
+        for i , pair in enumerate(self.imagePairs):
+            pair_list = []
+            for image in pair.images:
+                pair_list.append(image.path)
+            json.update({f'pair{i}' : pair_list})
+            print(json)
+        return json
 
-def listToJson (list, jsonFile):
-    with open(jsonFile, 'w') as f:
-        f.write(f'"{list}"')
+    class imagePair:
+        def __init__(self, image_a, image_b):
+            #self.path_post_one = path + os.path.basename(path_image_one)
+            #self.path_post_two = path + os.path.basename(path_image_two)
+            self.image_a = image_a
+            self.image_b = image_b
+            self.images = [self.image_a, self.image_b]
+
+    class image:
+        def __init__(self, path):
+            self.path = path
+            self.name = os.path.basename(self.path)
+
+def toJsonFile(data, path):
+        with open(path, 'w') as f:
+            f.write(json.dumps(data))
 
 def main ():
-    print('**** Image compare tool ****')
+    print('**** Image compare tool ****\n')
 
-    path_image_one = input("\nDrag and drop or indicate path or URL of the image one:\n")
-    path_image_one = path_image_one.replace("'", '')
+    path_image_one = input("Drag and drop or indicate path or URL __1__:\n")
+    path_image_one = path_image_one.replace("'","")
+    path_image_two = input("Drag and drop or indicate path or URL __2__:\n")
+    path_image_two = path_image_two.replace("'","")
 
-    path_image_two = input("\nDrag and drop or indicate path or URL of the image two:\n")
-    path_image_two = path_image_two.replace("'", '')
+    py_path = abspath(getsourcefile(lambda:0))
+    folder_path = py_path.replace('imgCompare.py','')
+    loads_path = folder_path + 'loads/'
 
-    json_list = []
+    loadsDir = loads(loads_path)
+    loadsDir.empty()
 
-    image_pair = imagePair(path_image_one, path_image_two)
-    image_pair.emptyPairDir()
-    image_pair.addPairToDir()
-    image_pair.addPairToList(json_list)
+    image_a = loadsDir.image(path_image_one)
+    image_b = loadsDir.image(path_image_two)
+    imagePair = loadsDir.imagePair(image_a, image_b)
 
-    listToJson(json_list, 'inputs.json')
+    loadsDir.addPair(imagePair)
+    loadsDir.copyPair()
+
+    toJsonFile(loadsDir.toJson(), 'inputs.json')
 
     #simple_server = simpleServer()
     #simple_server.openLocalHost()
