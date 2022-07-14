@@ -1,0 +1,80 @@
+p {
+    margin: 0;
+}
+
+.set {
+    position: relative;
+    width: 100%;
+}
+
+.set__bar {
+    background-color: rgb(219, 219, 219);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+
+.set__text,
+.set__name {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 15px;
+    font-style: italic;
+    padding-right: 10px;
+}
+
+.set__name {
+    font-size: 17px;
+    font-style: italic;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.set__errorBar {
+    background-color: rgb(255, 69, 69);
+}
+
+.set__textError {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 10px;
+    color: #fff;
+    padding-right: 10px;
+}
+
+.resource{
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    width: 100vw;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+.resource__canvas {
+    display: none;
+}
+
+.resource__canvas--visible {
+    display: block;
+}
+
+.resource__img,
+.resource__canvas--visible {
+    flex-basis: 33.33333333%;
+    max-width: 33.33333333%;
+}
+
+.resource__input {
+    padding-left: 30px;
+    width: 100%;
+}
+
+.resource__text {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 10px;
+    padding-right: 10px;
+}
+
+.img1,
+.img2{
+    width: 100%;
+}
