@@ -12,8 +12,8 @@ from classes import server
 from classes import menu
 
 def toJsonFile(data, path):
-        with open(path, 'w') as f:
-            f.write(json.dumps(data))
+    with open(path, 'w') as f:
+        f.write(json.dumps(data))
 
 def checkExisting(*paths):
     for path in paths:
@@ -77,7 +77,7 @@ async def simpleCompare():
 
     data = {'pair' : [image_a_relPath, image_b_relPath, image_a.name]}
 
-    toJsonFile(data, 'processor/inputs.json')
+    toJsonFile(data, f'{folder_path}processor/inputs.json')
 
 async def multipleCompare():
     print('')
@@ -114,7 +114,7 @@ async def multipleCompare():
                 i = i + 1
                 break
 
-    toJsonFile(data, 'processor/inputs.json')
+    toJsonFile(data, f'{folder_path}processor/inputs.json')
 
 def emptyTxt(txtFilePath: str):
     with open(txtFilePath, 'w') as f:

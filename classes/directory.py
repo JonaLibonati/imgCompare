@@ -99,8 +99,7 @@ class Directory:
 
     async def addFiles(self, *args: File) -> Directory:
         for file in args:
-            cp_file = await file.copy(self)
-            self.files.update({cp_file.name : cp_file})
+            await file.copy(self)
         return self
 
     async def addDirectories(self, *args: Directory) -> Directory:
@@ -200,8 +199,9 @@ class File:
             if os.path.exists(new_path):
                 new_path = f'{dir.path}/{self.name}__copy{self.extension}'
             with open(new_path, 'wb') as fdestination:
-                   await asyncio.to_thread(shutil.copyfileobj, forigin, fdestination)
+                await asyncio.to_thread(shutil.copyfileobj, forigin, fdestination)
             copied_file = File(new_path)
+            dir.files.update({copied_file.name : copied_file})
         return copied_file
 
     def rename(self, name: str) -> File:
