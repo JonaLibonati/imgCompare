@@ -3,15 +3,23 @@ import time
 import http.server
 import socketserver
 import webbrowser
+import os
 
 #Global Variable
 close = False
+dir_path = ''
 
 class simpleServer:
-    def __init__(self, PORT: int, relativeURL: str) -> None:
+    def __init__(self, PORT: int, relativeURL: str, dirPath: str | None) -> None:
+        self.path = dirPath
+        self._setDirectory()
         self.PORT = PORT
         self.handler = ServerHandler
         self.URL = f'http://localhost:{self.PORT}/{relativeURL}'
+
+    def _setDirectory(self):
+        global dir_path
+        dir_path = self.path
 
     #to start simpleServer only to GET resources.
     def run(self) -> None:
@@ -50,6 +58,9 @@ class simpleServer:
         webbrowser.open_new_tab(self.URL)
 
 class ServerHandler(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=dir_path, **kwargs)
+
     def do_CLOSE(self):
         global close
         close = True

@@ -27,10 +27,10 @@ class Directory:
                 d = Directory(path)
                 self.directories.update({d.name : d})
 
-    def _redifineAtributes(self):
+    def _redifineAtributes(self) -> None:
         self.name = self.path.split('/')[-1]
 
-    def newDir(self, name):
+    def newDir(self, name: str) -> Directory:
         for dir in self.directories.values():
             if dir.name == name:
                 raise FileExistsError (f'Error. There is already a directory named {dir.name} in {self.path}')
@@ -38,10 +38,18 @@ class Directory:
         self.directories.update({new_dir.name : new_dir})
         return new_dir
 
+    def newFile(self, name: str) -> File:
+        for file in self.files.values():
+            if f'{file.name}{file.extension}' == name:
+                raise FileExistsError (f'Error. There is already a file named {file.name} in {self.path}')
+        f = File(f'{self.path}/{name}')
+        self.files.update({f'{f.name}{f.extension}' : f})
+        return f
+
     def data(self) -> dict:
         data = {
-            f'{self.name}_dir': self.selfData(),
-            'Content': self.contentData()
+            'selfData': self.selfData(),
+            'contentData': self.contentData()
         }
         return data
 
@@ -75,7 +83,7 @@ class Directory:
         if self.files != {}:
             self.removeFiles(*list(self.files.values()))
 
-    def removeDir(self, dir) -> None:
+    def removeDir(self, dir: Directory) -> None:
         try:
             dir.empty()
             self.directories.pop(dir.name)
@@ -85,7 +93,7 @@ class Directory:
         except OSError as e:
             print(f'Error when trying to delete directory. Please check if the directory {self.path} is empty. {e}')
 
-    def removeDirs(self, *args: File) -> None:
+    def removeDirs(self, *args: Directory) -> None:
         for arg in args:
             self.removeDir(arg)
 
@@ -112,15 +120,17 @@ class Directory:
         for file in self.files.values():
             await file.copy(dir)
 
-    async def copyDirsTo(self, dir: Directory):
+    async def copyDirsTo(self, dir: Directory) -> None:
         for directory in self.directories.values():
             await directory.copy(dir)
 
+    async def copyAllTo(self, dir: Directory) -> None:
+        await self.copyFilesTo(dir)
+        await self.copyDirsTo(dir)
+
     async def copy(self, dir: Directory) -> Directory:
         a = dir.newDir(self.name)
-        await self.copyFilesTo(a)
-        await self.copyDirsTo(a)
-        return a
+        await self.copyAllTo(a)
 
     def filesList(self):
         return list(self.files.values())
@@ -196,8 +206,10 @@ class File:
     async def copy(self, dir: Directory) -> File:
         with open(self.path, 'rb') as forigin:
             new_path = f'{dir.path}/{self.name}{self.extension}'
-            if os.path.exists(new_path):
-                new_path = f'{dir.path}/{self.name}__copy{self.extension}'
+            copy_string = ''
+            while os.path.exists(new_path):
+                copy_string = f'{copy_string}__copy'
+                new_path = f'{dir.path}/{self.name}{copy_string}{self.extension}'
             with open(new_path, 'wb') as fdestination:
                 await asyncio.to_thread(shutil.copyfileobj, forigin, fdestination)
             copied_file = File(new_path)

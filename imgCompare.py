@@ -1,4 +1,3 @@
-
 from inspect import getsourcefile
 from os.path import abspath
 import os
@@ -10,6 +9,9 @@ import random
 from classes import directory
 from classes import server
 from classes import menu
+
+#global variables
+root_path = ''
 
 def toJsonFile(data, path):
     with open(path, 'w') as f:
@@ -45,7 +47,9 @@ def askInputs(text1, text2):
 
 def instanseLoadsDir():
     py_path = abspath(getsourcefile(lambda:0))
+    global root_path
     folder_path = py_path.replace('imgCompare.py','')
+    root_path = folder_path
     loads1_path = folder_path + 'processor/loads1/'
     loads2_path = folder_path + 'processor/loads2/'
     loads1 = directory.Directory(loads1_path)
@@ -97,6 +101,7 @@ async def multipleCompare():
     print('PLEASE WAIT. This could take a few seconds')
 
     dir_a = directory.Directory(inputs[0])
+    print(dir_a.filesList())
     dir_b = directory.Directory(inputs[1])
 
     await asyncio.gather(
@@ -121,7 +126,7 @@ def emptyTxt(txtFilePath: str):
         f.write('')
 
 def startServer():
-    Server = server.simpleServer(random.randrange(1000,9999), 'processor/index.html')
+    Server = server.simpleServer(random.randrange(1000,9999), 'processor/index.html', root_path)
     Server.openWebbrowser()
     Server.setShutdownMethod(lambda: Server.waitSignalAndShutdown())
     Server.run()
