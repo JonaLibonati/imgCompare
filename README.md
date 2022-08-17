@@ -2,7 +2,7 @@
 This tool compares images and highlights the differences between them.
 
 ## Running the tool
-Running the script by using the python3 and the [script-path] as a parameter within the files to rename:
+Running the script by using the python3 and the [script-path]:
 ```
 python3 <script-path>
 ```
