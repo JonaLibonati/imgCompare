@@ -5,7 +5,7 @@ async function main(){
     await drawHTML();
     closeServer();
     //Elements
-    const set__sensivility = document.getElementsByClassName('set__sensivility');
+    const set__sensibility = document.getElementsByClassName('set__sensibility');
     const set__barError = document.getElementsByClassName('set__errorBar');
     const set__textError = document.getElementsByClassName('set__textError');
     const images1 = document.getElementsByClassName('img1');
@@ -22,7 +22,7 @@ async function main(){
         images2[a].addEventListener('load', function () {
             runProcess(a);
         });
-        set__sensivility[a].addEventListener('click', function () {
+        set__sensibility[a].addEventListener('click', function () {
             runProcess(a);
         });
     }
@@ -53,7 +53,7 @@ async function main(){
         let c1 = new canvas(canvas1[i], width, height);
         let c2 = new canvas(canvas2[i], width, height);
         let p = new processor(images1[i], images2[i], c1, c2);
-        p.senValue = set__sensivility[i].value;
+        p.senValue = set__sensibility[i].value;
         p.computeFrame();
     }
 

@@ -37,7 +37,7 @@ def checkAreDirs(*paths):
 
 def askInput(text):
     path_one = input(f"\nDrag and drop or indicate path {text}:\n")
-    return path_one.replace("'","")
+    return path_one.replace("'","").replace("\ ", " ").strip()
 
 def askInputs(text1, text2):
     path_one = askInput(text1)
@@ -101,7 +101,6 @@ async def multipleCompare():
     print('PLEASE WAIT. This could take a few seconds')
 
     dir_a = directory.Directory(inputs[0])
-    print(dir_a.filesList())
     dir_b = directory.Directory(inputs[1])
 
     await asyncio.gather(

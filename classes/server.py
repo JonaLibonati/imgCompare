@@ -10,7 +10,7 @@ close = False
 dir_path = ''
 
 class simpleServer:
-    def __init__(self, PORT: int, relativeURL: str, dirPath: str | None) -> None:
+    def __init__(self, PORT: int, relativeURL: str, dirPath: str) -> None:
         self.path = dirPath
         self._setDirectory()
         self.PORT = PORT

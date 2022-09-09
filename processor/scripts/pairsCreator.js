@@ -12,8 +12,8 @@ function createSetBar(name){
     sec.innerHTML = `
         <div class="set__bar">
             <div class="set__name">${name}</div>
-            <label class="set__text" for="sensivility">Sensivility</label>
-            <input class="set__sensivility" id="sensivility" type="range" min="0" max="1000" value="500">
+            <label class="set__text" for="sensibility">sensibility</label>
+            <input class="set__sensibility" id="sensibility" type="range" min="0" max="1000" value="500">
         </div>
         <div class="set__bar set__errorBar" style="display:none">
             <p class="set__textError"></p>

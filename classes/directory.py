@@ -132,14 +132,49 @@ class Directory:
         a = dir.newDir(self.name)
         await self.copyAllTo(a)
 
-    def filesList(self):
+    def filesList(self) -> list:
         return list(self.files.values())
 
-    def dirList(self):
+    def dirList(self) -> list:
         return list(self.directories.values())
 
-    def _levelBuilding(self, folder: Directory, level = -1, i = 1, l = []) -> list:
-        if 0 < i <= level or level == -1:
+    def findDirs(self, names: list(str), deepLevel = -1, i = 1) -> list:
+        matches = []
+        if 0 < i <= deepLevel or deepLevel == -1:
+            for dir in self.directories.values():
+                for name in names:
+                    if dir.name == name:
+                        matches.append(dir)
+                i = i + 1
+                matches.extend(dir.findFilesByExtension(names, deepLevel, i))
+        return matches
+
+    def findFilesByName(self, names: list(str), deepLevel = -1, i = 1) -> list:
+        matches = []
+        if 0 < i <= deepLevel or deepLevel == -1:
+            for file in self.files.values():
+                for name in names:
+                    if file.name == name:
+                        matches.append(file)
+            for dir in self.directories.values():
+                i = i + 1
+                matches.extend(dir.findFilesByExtension(names, deepLevel, i))
+        return matches
+
+    def findFilesByExtension(self, extensions: list, deepLevel = -1, i = 1) -> list:
+        matches = []
+        if 0 < i <= deepLevel or deepLevel == -1:
+            for file in self.files.values():
+                for extension in extensions:
+                    if file.extension == extension:
+                        matches.append(file)
+            for dir in self.directories.values():
+                i = i + 1
+                matches.extend(dir.findFilesByExtension(extensions, deepLevel, i))
+        return matches
+
+    def _levelBuilding(self, folder: Directory, deepLevel = -1, i = 1, l = []) -> list:
+        if 0 < i <= deepLevel or deepLevel == -1:
             level_list = l
             folder._printLevel(level_list)
             print(f'|')
@@ -156,7 +191,7 @@ class Directory:
                 else:
                     level_list.append('|   ')
                 i = i + 1
-                dir._levelBuilding(dir, level, i, level_list)
+                dir._levelBuilding(dir, deepLevel, i, level_list)
                 i = i - 1
                 level_list.pop(-1)
 
